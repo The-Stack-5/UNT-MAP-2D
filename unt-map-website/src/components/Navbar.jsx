@@ -11,24 +11,30 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-emerald-800 bg-emerald-700 text-white shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <nav className="sticky top-0 z-50 border-b border-emerald-900/30 bg-emerald-800/85 text-white backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-4 sm:flex-row sm:px-6">
         <Link to="/" className="text-xl font-bold tracking-tight">
           UNT Navigator
         </Link>
 
-        <div className="flex flex-wrap items-center gap-5 text-sm font-medium">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`transition hover:text-emerald-100 ${
-                location.pathname === link.to ? "underline underline-offset-4" : ""
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          {links.map((link) => {
+            const active = location.pathname === link.to;
+
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition duration-200 ${
+                  active
+                    ? "bg-white text-emerald-800 shadow-sm"
+                    : "text-white/90 hover:bg-white/15 hover:text-white"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>
