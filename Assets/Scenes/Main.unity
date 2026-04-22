@@ -5424,7 +5424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapCamera: {fileID: 519420031}
-  YouAreHere: {fileID: 520396750}
+  YouAreHere: {fileID: 520396752}
   Boundries:
   - {fileID: 2115683883}
   - {fileID: 380651707}
@@ -5439,6 +5439,7 @@ MonoBehaviour:
   classroomLayer:
     serializedVersion: 2
     m_Bits: 0
+  navigator: {fileID: 949624574}
 --- !u!114 &949624574
 MonoBehaviour:
   m_ObjectHideFlags: 0

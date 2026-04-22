@@ -6,7 +6,7 @@ using UnityEngine;
 public class MapNavigator : MonoBehaviour
 {
     public Transform YouAreHere;
-    public float walkSpeed = 0.1f;
+    public float walkSpeed = 0.6f;
     public PolygonCollider2D[] Boundaries;
 
     private Vector3 startClick;
@@ -21,6 +21,9 @@ public class MapNavigator : MonoBehaviour
 
     private LineRenderer line;
     private Coroutine walkRoutine;
+
+    private Waypoint tempStart;
+    private Waypoint tempEnd;
 
     void Awake()
     {
@@ -49,15 +52,40 @@ public class MapNavigator : MonoBehaviour
         }
     }
 
-    public void RunFromButton(Vector3 start, Vector3 end)
+    public void ComputePath()
     {
-        startClick = start;
-        endClick = end;
-        hasStart = true;
-        hasEnd = true;
-        waitingForEnd = false;
+        if (!hasStart || !hasEnd || Boundaries == null || Boundaries.Length == 0)
+            return;
 
-        ComputePath();
+        CleanupTempNodes();
+
+        currentPath.Clear();
+        pathPoints.Clear();
+        line.positionCount = 0;
+
+        if (walkRoutine != null)
+            StopCoroutine(walkRoutine);
+
+        if (!IsInsideBoundaries(startClick) || !IsInsideBoundaries(endClick))
+            return;
+
+        tempStart = CreateTempWaypoint(startClick);
+        tempEnd = CreateTempWaypoint(endClick);
+
+        if (tempStart == null || tempEnd == null)
+            return;
+
+        currentPath = BFS(tempStart, tempEnd);
+
+        BuildPathPoints();
+        DrawPath();
+
+        if (YouAreHere != null && pathPoints.Count > 0)
+            walkRoutine = StartCoroutine(WalkPath());
+
+        hasStart = false;
+        hasEnd = false;
+        waitingForEnd = false;
     }
 
     public void ResetPath()
@@ -72,37 +100,20 @@ public class MapNavigator : MonoBehaviour
 
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
+
+        CleanupTempNodes();
     }
 
-    public void ComputePath()
+    private void CleanupTempNodes()
     {
-        if (!hasStart || !hasEnd || Boundaries == null || Boundaries.Length == 0)
-            return;
+        if (tempStart != null)
+            Destroy(tempStart.gameObject);
 
-        currentPath.Clear();
-        pathPoints.Clear();
-        line.positionCount = 0;
+        if (tempEnd != null)
+            Destroy(tempEnd.gameObject);
 
-        if (walkRoutine != null)
-            StopCoroutine(walkRoutine);
-
-        if (!IsInsideBoundaries(startClick) || !IsInsideBoundaries(endClick))
-            return;
-
-        Waypoint startNode = CreateTempWaypoint(startClick);
-        Waypoint endNode = CreateTempWaypoint(endClick);
-
-        if (startNode == null || endNode == null)
-            return;
-
-        currentPath = BFS(startNode, endNode);
-        BuildPathPoints();
-        DrawPath();
-
-        if (YouAreHere != null && pathPoints.Count > 0)
-            walkRoutine = StartCoroutine(WalkPath());
-        Destroy(startNode.gameObject);
-        Destroy(endNode.gameObject);
+        tempStart = null;
+        tempEnd = null;
     }
 
     private bool IsInsideBoundaries(Vector3 pos)
@@ -230,9 +241,7 @@ public class MapNavigator : MonoBehaviour
         line.positionCount = pathPoints.Count;
 
         for (int i = 0; i < pathPoints.Count; i++)
-        {
             line.SetPosition(i, pathPoints[i]);
-        }
     }
 
     private IEnumerator WalkPath()
