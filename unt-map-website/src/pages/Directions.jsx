@@ -1,6 +1,6 @@
 export default function Directions() {
   return (
-    <section className="bg-gradient-to-b from-slate-50 to-slate-100 py-16">
+    <section className="bg-linear-to-b from-slate-50 to-slate-100 py-16">
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">
@@ -35,6 +35,16 @@ export default function Directions() {
               feature is enabled.
             </p>
           </div>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-white/40 bg-white/70 p-6 shadow-xl backdrop-blur-lg">
+          <h2 className="text-xl font-semibold text-slate-900">Tips</h2>
+
+          <ul className="mt-4 space-y-2 text-slate-600">
+            <li>• Start zoomed out to understand the overall layout</li>
+            <li>• Use floor switching to follow routes across levels</li>
+            <li>• Reset your route if the path looks incorrect</li>
+          </ul>
         </div>
       </div>
     </section>
